@@ -1,10 +1,13 @@
 import discord
+from discord import app_commands
 import random
 from discord.ext import commands
 import re
 
 intents = discord.Intents.default()
 intents.message_content = True  
+client = discord.Client(intents=intents)
+tree = discord.app_commands.CommandTree(client)
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -15,6 +18,7 @@ responses = [
     "Did you know that Hillary Clinton forced Mazda to sell automatic versions of the Miata? #MiataFacts ",
     "Make sure you put a 'Shocker' sticker on your Miata, so people don't think you're gay! #MiataFacts ",
     "A lot of drivers make jokes about them, but true drivers know to respect the Miata. #MiataFacts ",
+    "Miata is the best car with wheels and pop up headlights... Or not but still the best. #MiataFacts",    
     "Did you know that the Miata is more environmentally friendly than a Prius? #MiataFacts ",
     "The Mazda MX-5 is literally the best drivers' car in history, hands down. #MiataFacts ",
     "Acceleration is only needed if you have to slow down for corners. #MiataFacts ",
@@ -24,6 +28,7 @@ responses = [
     "The 2019 Mazda 3 is literally just a more practical MX-5. #MiataFacts ",
     "Better to be slow car fast than fast car slow! #MiataFacts ",
     "A roll cage legally makes a Miata a race car. #MiataFacts ",
+
 ]
 
 @bot.event
@@ -31,17 +36,26 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    miata_bot_present = re.search(r"\bmiat(a)?\s+bot\b", message.content)
+    RNG=random.randint(0, len(responses)-1)
 
-    mx5_match = re.search(r"\bmx[^a-zA-Z]?5\b", message.content)
+    miata_bot_present = re.search(r"\bmiat(a)?\s+bot\b", message.content, re.I)
 
-    miat_match = None if miata_bot_present else re.search(r"\bmiat(a)?\b", message.content)
+    mx5_match = re.search(r"\bmx[^a-zA-Z]?5\b", message.content, re.I)
+
+    miat_match = None if miata_bot_present else re.search(r"\bmiat(a)?\b", message.content, re.I)
+
+    string_theory_match = re.search(r"(?=.*\bmiata\b)(?=.*\bstring theory\b)", message.content, re.I)
 
     triggered_by_mention = bot.user in message.mentions
     triggered_by_keyword = miat_match or mx5_match
 
-    if triggered_by_mention or triggered_by_keyword:
-        await message.reply(responses[ random.randint(0, len(responses)-1)], mention_author=triggered_by_mention)
+    if  string_theory_match:
+        testImage = discord.File("C:/Users/feder/Documents/programmazione/miatbot/stringtheory.png", filename="stringtheory.png")
+        await message.reply("i gotcha!", file=testImage)
+    elif triggered_by_mention or triggered_by_keyword:
+        await message.reply(responses[RNG], mention_author=triggered_by_mention)
         await message.add_reaction("<:mazdamiata:1392566131558056038>")
 
     await bot.process_commands(message)
+
+bot.run("") # insert your bot's Token here
