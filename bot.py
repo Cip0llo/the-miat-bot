@@ -3,13 +3,28 @@ from discord import app_commands
 import random
 from discord.ext import commands
 import re
+import os
+from googletrans import Translator
+
+MY_GUILD = discord.Object(id=INSERT GUILD ID)
+
+class MyClient(discord.Client):
+    def __init__(self, *, intents: discord.Intents):
+        super().__init__(intents=intents)
+        self.tree = app_commands.CommandTree(self)
+
+    async def setup_hook(self):
+        self.tree.copy_global_to(guild=MY_GUILD)
+        await self.tree.sync(guild=MY_GUILD)
 
 intents = discord.Intents.default()
 intents.message_content = True  
-client = discord.Client(intents=intents)
-tree = discord.app_commands.CommandTree(client)
+bot = MyClient(intents=intents)
+translator = Translator()
 
-bot = commands.Bot(command_prefix="!", intents=intents)
+furryImagesFolder = "INSERT PATH TO FURRY FOLDER"
+furryFiles = os.listdir(furryImagesFolder)
+nissanMurano = "INSERT PATH TO NISSAN MURANO FILES FOLDER"
 
 responses = [
     "Trump imposed tariffs on steel so that Mazda couldn't make the Miata in the United States in order to protect Mustang sales. #MiataFacts ",
@@ -31,6 +46,28 @@ responses = [
 
 ]
 
+@bot.tree.command()
+async def gay_test(interaction: discord.Interaction):
+    """Time to test your queerness!!"""
+    i = random.randint(0, 100)
+    if i <= 15:
+        await interaction.response.send_message(f'youre straight :D')
+    elif i <= 30:
+        await interaction.response.send_message(f"bicurious... but still mostly straight :3")
+    elif i <= 45:
+        await interaction.response.send_message(f"mhh.. time to discover what omnisexual means!")
+    elif i <=65:
+        await interaction.response.send_message(f"ooo someone's bisexual/pansexual ;3")
+    elif i <= 85:
+        await interaction.response.send_message(f"closer to the same gender... but maybe if you get that one 10/10...")
+    elif i <= 100:
+        await interaction.response.send_message(f"that's it... you did it... you're homosexual :D")
+
+@bot.tree.command()
+async def japanese_check(interaction: discord.Interaction):
+    """dont mind this, it's just a command to check the status of the translate API"""
+    await interaction.response.send_message((await translator.translate("The quick brown fox jumps over the lazy dog.", dest="ja")).text)
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -39,23 +76,38 @@ async def on_message(message):
     RNG=random.randint(0, len(responses)-1)
 
     miata_bot_present = re.search(r"\bmiat(a)?\s+bot\b", message.content, re.I)
-
     mx5_match = re.search(r"\bmx[^a-zA-Z]?5\b", message.content, re.I)
-
     miat_match = None if miata_bot_present else re.search(r"\bmiat(a)?\b", message.content, re.I)
-
-    string_theory_match = re.search(r"(?=.*\bmiata\b)(?=.*\bstring theory\b)", message.content, re.I)
+    string_theory_match = re.search(r"(?=.*\bstring theory\b)", message.content, re.I)
+    colon3_match = re.search(r":3|;3|:#", message.content, re.I)
+    nissan_match= re.search(r"\bnissan\b", message.content, re.I)
+    murano_match  = re.search(r"\bmurano\b", message.content, re.I)
 
     triggered_by_mention = bot.user in message.mentions
     triggered_by_keyword = miat_match or mx5_match
 
-    if  string_theory_match:
-        testImage = discord.File("C:/Users/feder/Documents/programmazione/miatbot/stringtheory.png", filename="stringtheory.png")
-        await message.reply("i gotcha!", file=testImage)
-    elif triggered_by_mention or triggered_by_keyword:
-        await message.reply(responses[RNG], mention_author=triggered_by_mention)
-        await message.add_reaction("<:mazdamiata:1392566131558056038>")
+    if colon3_match and (triggered_by_mention or  triggered_by_keyword):
+        random_furry_image = random.choice(furryFiles)
+        random_furry_image_path = os.path.join(furryImagesFolder, random_furry_image)
+        await message.reply("here's a goober for ya ;3c", file=discord.File(random_furry_image_path))
+    
+    elif  string_theory_match and (triggered_by_keyword or triggered_by_mention):
+        await message.reply("i gotcha!", file=discord.File("INSERT PATH TO IMAGE", filename="stringtheory.png"))
 
-    await bot.process_commands(message)
+    elif nissan_match and murano_match and (triggered_by_mention or triggered_by_keyword):
+        randBool = bool(random.getrandbits(1))
+        if randBool:    
+            nissan_murano = discord.File(nissanMurano + "INSERT YOUR FIRST NISSAN MURANO IMAGE FILE NAME HERE")
+        else: 
+            nissan_murano = discord.File(nissanMurano + "INSERT YOUR SECOND NISSAN MURANO IMAGE FILE HERE")
+        await message.reply("you have a weird obsession towards nissan to even know this one", file=nissan_murano)
 
-bot.run("") # insert your bot's Token here
+    elif triggered_by_mention or triggered_by_keyword :
+        await message.add_reaction("INSERT YOUR EMOJI HERE")
+        if random.randint(1, 50) == 50:
+            await message.reply((await translator.translate(responses[RNG], dest="ja")).text, mention_author=triggered_by_mention)
+        else:
+            await message.reply(responses[RNG], mention_author=triggered_by_mention)
+       
+
+bot.run("INSERT YOUR BOT TOKEN HERE")
