@@ -102,7 +102,7 @@ async def on_message(message):
             nissan_murano = discord.File(nissanMurano + "INSERT YOUR SECOND NISSAN MURANO IMAGE FILE HERE")
         await message.reply("you have a weird obsession towards nissan to even know this one", file=nissan_murano)
 
-    elif triggered_by_mention or triggered_by_keyword :
+    elif (triggered_by_mention or triggered_by_keyword) and not "http" in message.content:
         await message.add_reaction("INSERT YOUR EMOJI HERE")
         if random.randint(1, 50) == 50:
             await message.reply((await translator.translate(responses[RNG], dest="ja")).text, mention_author=triggered_by_mention)
@@ -111,3 +111,4 @@ async def on_message(message):
        
 
 bot.run("INSERT YOUR BOT TOKEN HERE")
+
