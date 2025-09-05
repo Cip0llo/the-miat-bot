@@ -99,8 +99,7 @@ async def on_message(message):
 
     if colon3_match and default_triggers:
         random_furry_image = random.choice(furryFiles)
-        random_furry_image_path = os.path.join(furryImagesFolder, random_furry_image)
-        await FinalOutput("here's a goober for ya ;3c", file=discord.File(random_furry_image_path))
+        await FinalOutput("here's a goober for ya ;3c", file=discord.File(furryImagesFolder + random_furry_image))
 
     elif  string_theory_match and default_triggers:
         await FinalOutput("i gotcha!", file=discord.File("INSERT PATH TO THE STRING THEORY IMAGE FILE"))
