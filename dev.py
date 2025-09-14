@@ -21,7 +21,7 @@ intents = discord.Intents.default()
 intents.message_content = True  
 bot = MyClient(intents=intents)
 
-nissanMurano = "C:/Users/feder/Documents/programmazione/miatbot/dependencies/nissanmurano/"
+nissanMurano = "INSERT NISSAN MURANO FILE PATH HERE"
 
 responses = [
     "Trump imposed tariffs on steel so that Mazda couldn't make the Miata in the United States in order to protect Mustang sales. #MiataFacts ",
@@ -89,7 +89,7 @@ async def on_message(message):
         await FinalOutput("you have a weird obsession towards nissan to even know this one", file=nissan_murano)
 
     elif default_triggers and not "http" in message.content:
-        await message.add_reaction("<:mazdamiata:1392566131558056038>")
+        await message.add_reaction("INSERT REACTION EMOJI HERE")
         await FinalOutput(str(responses[RNG]))
 
 bot.run("INSERT BOT TOKEN HERE")
